@@ -18,6 +18,10 @@ Product gallery images, sizes, and colors use `jsonb`; prices use fixed-precisio
 5. Start the app with `npm run dev`. `/api/health` checks whether the app can query the Supabase schema.
 6. Register the owner account through the website, then promote that email to admin from the Supabase SQL Editor: `UPDATE public.users SET role = 'admin' WHERE email = 'owner@example.com';`. Keep admin promotion out of public signup.
 
+## Deploy on Netlify
+
+The repository includes `netlify.toml`, which publishes `public/`, rewrites `/api/*` to the Express Netlify Function, and falls back to `index.html` for client-side routes. In Netlify, add `SUPABASE_URL` and `SUPABASE_ANON_KEY` under **Site configuration > Environment variables**, then deploy. The browser assets are served from `public/`; server API routes run through `netlify/functions/api.js`.
+
 The Express API now uses Supabase Auth and PostgREST through the anon key and per-user access tokens. The old SQLite file is no longer read by the running app. Existing account passwords are not automatically transferred into Supabase Auth; customers must sign up/reset their password, or accounts can be linked by email when users sign up. A legacy SQLite importer is provided for catalog, settings, and order data, but it requires a direct PostgreSQL URL configured as `SUPABASE_DB_URL` and should only be run after applying the migrations.
 
 To import local legacy rows, back up `alubarika.db`, set `SUPABASE_DB_URL` privately, apply the schema first, and then run `npm run db:supabase:import-sqlite`. The importer preserves IDs and upserts rows; run only against the intended project. Legacy password hashes are retained as unused migration data and are not used by Supabase Auth.
