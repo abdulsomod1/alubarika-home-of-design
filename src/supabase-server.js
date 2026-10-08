@@ -144,6 +144,8 @@ async function getProfile(client, authUserId) {
 }
 
 async function optionalAuth(req, res, next) {
+  if (['/auth/signup', '/auth/login', '/auth/refresh', '/auth/reset-password'].includes(req.path)) return next();
+
   const token = (req.headers.authorization || '').startsWith('Bearer ')
     ? req.headers.authorization.slice(7)
     : req.headers['x-auth-token'];
